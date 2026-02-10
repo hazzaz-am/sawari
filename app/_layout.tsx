@@ -1,8 +1,10 @@
+import "../global.css";
 import { useFonts } from "expo-font";
 import { SplashScreen, Stack } from "expo-router";
 import { useEffect } from "react";
-import "../global.css";
 import { StatusBar } from "react-native";
+import { ClerkProvider } from "@clerk/clerk-expo";
+import { tokenCache } from "@clerk/clerk-expo/token-cache";
 
 export default function RootLayout() {
 	const [loaded] = useFonts({
@@ -24,10 +26,9 @@ export default function RootLayout() {
 	if (!loaded) {
 		return null;
 	}
-	{
-	}
+
 	return (
-		<>
+		<ClerkProvider tokenCache={tokenCache}>
 			<StatusBar />
 			<Stack>
 				<Stack.Screen name="index" options={{ headerShown: false }} />
@@ -35,6 +36,6 @@ export default function RootLayout() {
 				<Stack.Screen name="(auth)" options={{ headerShown: false }} />
 				<Stack.Screen name="+not-found" />
 			</Stack>
-		</>
+		</ClerkProvider>
 	);
 }
