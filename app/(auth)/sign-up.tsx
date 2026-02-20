@@ -2,10 +2,11 @@ import CustomButton from "@/components/ui/custom-button";
 import InputField from "@/components/ui/input-field";
 import OAuth from "@/components/ui/o-auth";
 import { icons, images } from "@/constants";
+import { fetchAPI } from "@/lib/fetchApi";
 import { useSignUp } from "@clerk/clerk-expo";
 import { Link, useRouter } from "expo-router";
 import { useState } from "react";
-import { Alert, Image, Pressable, ScrollView, Text, View } from "react-native";
+import { Alert, Image, ScrollView, Text, View } from "react-native";
 import ReactNativeModal from "react-native-modal";
 interface IVerification {
 	state: "default" | "pending" | "success" | "failed";
@@ -60,7 +61,17 @@ export default function SignUpScreen() {
 			});
 
 			if (signUpAttempt.status === "complete") {
-				// TODO: CREATE A DATABASE USER
+				await fetchAPI("/(api)/user", {
+					method: "POST",
+					headers: {
+						"Content-Type": "application/json",
+					},
+					body: JSON.stringify({
+						name: form.name,
+						email: form.email,
+						clerkId: signUpAttempt.createdUserId,
+					}),
+				});
 				await setActive({
 					session: signUpAttempt.createdSessionId,
 				});
@@ -215,7 +226,7 @@ export default function SignUpScreen() {
 							title="Browse Home"
 							onPress={() => {
 								setShowSuccessModal(false);
-								router.push("/root/(tabs)/home");
+								router.push("/(root)/(tabs)/home");
 							}}
 						/>
 					</View>
